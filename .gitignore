@@ -1,0 +1,7 @@
+.terraform.lock.hcl
+terraform-aws.pub
+terraform.tfstate
+terraform.tfstate.backup
+.terraform
+.pub
+.exe

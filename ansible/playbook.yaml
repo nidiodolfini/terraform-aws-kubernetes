@@ -1,0 +1,106 @@
+- hosts: docker-kubectl
+  become: true
+  tasks:
+  - name: instalar dependencias
+    apt:
+      name: "{{item}}"
+      state: present
+      update_cache: yes
+    loop:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+ 
+  - name: adicionar chave GPG
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+ 
+  - name: adicionar repositorio docker
+    apt_repository:
+      repo: deb https://download.docker.com/linux/ubuntu bionic stable
+      state: present
+ 
+  - name: adicionar Kubernetes apt-key
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+  
+  - name: add Kubernetes' APT repository
+    apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: 'kubernetes' 
+
+  - name: install APT Transport HTTPS
+    apt:
+      name: apt-transport-https
+      state: present
+   
+  - name: install kubelet
+    apt:
+      name: kubelet
+      state: present
+      update_cache: true
+ 
+  - name: install kubeadm
+    apt:
+      name: kubeadm
+      state: present
+ 
+  - name: install kubectl
+    apt:
+      name: kubectl
+      state: present
+ 
+  - name: instala docker
+    apt:
+      name: "{{item}}"
+      state: latest
+      update_cache: yes
+    loop:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io 
+ 
+  - name: instalar python e pip ansible precisa
+    apt:
+      name: "{{item}}"
+      state: latest
+      update_cache: yes
+    loop:
+      - python3
+      - pip
+
+  - name: Instalar recurso docker ansible precisa
+    pip:
+      name: docker
+
+  - name: baixar imagem padrão Docker image
+    docker_image:
+      name: docker
+      source: pull
+
+  - name: deixar docker ativo
+    service:
+      name: docker
+      state: started
+      enabled: yes
+
+  - name: Criar container 
+    docker_container:
+      name: meucontainer
+      image: ubuntu
+      command: sleep 1d
+      state: present
+    with_sequence: count=2
+  
+  handlers:
+    - name: reiniciar docker
+      service: 
+        name: docker 
+        state: restarted
+  
+#ansible-playbook playbook.yaml -u ubuntu --private-key terraform-aws -i hosts.yaml

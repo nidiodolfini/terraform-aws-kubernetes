@@ -5,7 +5,7 @@ resource "aws_instance" "ec2_kubernetes" {
   #a Amazon Machine Image que será usada
   ami = var.imagem_instancia_ami
   #tipo da instancia, ou seja o tipo de hardware que será usado
-  instance_type = var.tipo_instancia
+  instance_type = var.tipo_instancia_kubernetes
   #tag Name nomeia
   tags = {
     #aqui estamos fazendo um concatenação de de string do texto

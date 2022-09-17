@@ -1,98 +1,80 @@
-- hosts: docker-kubectl
-  become: true
+- hosts: all
+  become: yes
   tasks:
-  - name: instalar dependencias
-    apt:
-      name: "{{item}}"
-      state: present
-      update_cache: yes
-    loop:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - gnupg-agent
-      - software-properties-common
- 
-  - name: adicionar chave GPG
-    apt_key:
-      url: https://download.docker.com/linux/ubuntu/gpg
-      state: present
- 
-  - name: adicionar repositorio docker
-    apt_repository:
-      repo: deb https://download.docker.com/linux/ubuntu bionic stable
-      state: present
- 
-  - name: adicionar Kubernetes apt-key
-    apt_key:
-      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-      state: present
-  
-  - name: adicionar repositorio Kubernetes
-    apt_repository:
-      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
-      state: present
-      filename: 'kubernetes' 
+    - name: criando diretório de configs do Docker
+      file: path=/etc/docker state=directory
 
-  - name: instalar APT Transport HTTPS
-    apt:
-      name: apt-transport-https
-      state: present
-   
-  - name: instalar kubelet
-    apt:
-      name: kubelet
-      state: present
-      update_cache: true
- 
-  - name: instalar kubeadm
-    apt:
-      name: kubeadm
-      state: present
- 
-  - name: instalar kubectl
-    apt:
-      name: kubectl
-      state: present
- 
-  - name: instalar docker
-    apt:
-      name: "{{item}}"
-      state: latest
-      update_cache: yes
-    loop:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io 
- 
-  - name: instalar python e pip
-    apt:
-      name: "{{item}}"
-      state: latest
-      update_cache: yes
-    loop:
-      - python3
-      - pip
+    - name: trocando o driver para systemd
+      copy:
+        dest: "/etc/docker/daemon.json"
+        content: |
+          {
+          "exec-opts": ["native.cgroupdriver=systemd"]
+          }
+    - name: instalando Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: true
 
-  - name: Instalar recurso docker
-    pip:
-      name: docker
+    - name: instalando APT Transport HTTPS
+      apt:
+        name: apt-transport-https
+        state: present
 
-  - name: baixar imagem padrão Docker image
-    docker_image:
-      name: docker
-      source: pull
+    - name: adicionando Kubernetes apt-key
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        state: present
 
-  - name: deixar docker ativo
-    service:
-      name: docker
-      state: started
-      enabled: yes
-  
-  handlers:
-    - name: reiniciar docker
-      service: 
-        name: docker 
-        state: restarted
-  
+    - name: adicionando repositório Kubernetes
+      apt_repository:
+        repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+        filename: 'kubernetes'
+
+    - name: instalando kubelet
+      apt:
+        name: kubelet=1.22.4-00
+        state: present
+        update_cache: true
+
+    - name: instalando kubeadm
+      apt:
+        name: kubeadm=1.22.4-00
+        state: present
+    - name: instalando kubectl
+      apt:
+        name: kubectl=1.22.4-00
+        state: present
+        force: yes
+
+    - name: inicializando o cluster
+      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
+      args:
+        chdir: $HOME
+        creates: cluster_initialized.txt
+
+    - name: criando o diretório .kube
+      become: yes
+      become_user: ubuntu
+      file:
+        path: $HOME/.kube
+        state: directory
+        mode: 0755
+
+    - name: copiando o admin.conf para o kube config
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu/.kube/config
+        remote_src: yes
+        owner: ubuntu
+
+    - name: instalando Pod network
+      become: yes
+      become_user: ubuntu
+      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
+      args:
+        chdir: $HOME
+        creates: pod_network_setup.txt
 #ansible-playbook playbook.yaml -u ubuntu --private-key terraform-aws -i hosts.yaml

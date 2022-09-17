@@ -40,6 +40,9 @@ variable "mapear_ip_publico" {
 variable "tipo_instancia" {
     default = "t2.micro"
 }
+variable "tipo_instancia_kubernetes" {
+    default = "t2.medium"
+}
 variable "imagem_instancia_ami" {
     default = "ami-085284d24fe829cd0"
 }

@@ -1,10 +1,10 @@
 #criando um SG e liberando a entrada via SSH(22) só para quem estiver
 #dentro da VPC e  deixando as maquinas sairem para a internet
-resource "aws_security_group" "nidio-acesso-ssh-private" {
+resource "aws_security_group" "sg_acesso_ssh_local" {
   #descrição do que estamos fazendo
-  description = "nidio sg acesso ssh somente VPC"
+  description = "sg = security group (grupo de segurança) acesso ssh somente VPC"
   #vinculando nosso SG a uma VPC
-  vpc_id = aws_vpc.nidio_vpc.id
+  vpc_id = aws_vpc.vpc.id
   
   #aqui está sendo passando a permissão de entrada para porta 22
   #mas só para quem estiver cidr da VPC
@@ -13,7 +13,7 @@ resource "aws_security_group" "nidio-acesso-ssh-private" {
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = ["10.0.0.0/16"]
+    cidr_blocks      = [var.bloco_ip_destino_local]
 
   }
   #permissão de saida da maquina, para a internet, pois se não
@@ -22,57 +22,52 @@ resource "aws_security_group" "nidio-acesso-ssh-private" {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    cidr_blocks      = [var.bloco_ip_destino_publico]
+    
   }
   tags = {
-    "Name" = "nidio_sg_ssh"
+    "Name" = "${var.usuario}_sg_ssh_local"
   }
 }
 
 #SG de permitindo o acesso a porta 80 para toda a internet, 
 #pois quem for acessar nosso front, estara na internet
-resource "aws_security_group" "nidio-acesso-web" {
-  name = "nidio-acesso-web"
-  description = "nidio sg acesso web"
-  vpc_id = aws_vpc.nidio_vpc.id
+resource "aws_security_group" "sg_acesso_web_publico" {
+  description = "sg acesso web publico"
+  vpc_id = aws_vpc.vpc.id
   #liberando a entrada pela porta 80 - HTTP
   ingress {
     description      = "HTTP"
     from_port        = 80
     to_port          = 80
     protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    cidr_blocks      = [var.bloco_ip_destino_publico]
   }
   tags = {
-    "Name" = "nidio_sg_web"
+    "Name" = "${var.usuario}_sg_web_publico"
   }
 }
 
 #liberando SSH(22) para a internet, mas poderia ser para o IP da sua empresa
 #pois nossa VM de gerenciamento, tem que ser acessivel de fora da VPC
-resource "aws_security_group" "nidio-acesso-ssh-mngt" {
-  name = "nidio-acesso-ssh-mngt"
-  description = "nidio sg acesso ssh-mngt"
-  vpc_id = aws_vpc.nidio_vpc.id
+resource "aws_security_group" "sg_acesso_ssh_publico" {
+  description = "nsg acesso ssh publico"
+  vpc_id = aws_vpc.vpc.id
  
   ingress {
     description      = "SSH-mngt"
     from_port        = 22
     to_port          = 22
     protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    cidr_blocks      = [var.bloco_ip_destino_publico]
   }
   egress {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    cidr_blocks      = [var.bloco_ip_destino_publico]
   }
   tags = {
-    "Name" = "nidio_sg_ssh-mngt"
+    "Name" = "${var.usuario}_sg_ssh_publico"
   }
 }

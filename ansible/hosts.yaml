@@ -1,2 +1,2 @@
 [docker-kubectl]
-#digite o IPs privados dos fronts
+#digite o IPs privados dos ec2 k8s

@@ -1,44 +1,45 @@
-variable "region" {
+variable "usuario" {
+    default = "nidio"
+}
+variable "regiao" {
      default = "us-west-1"
 }
-variable "availabilityZone" {
+variable "zona_disponibilidade" {
      default = "us-west-1a"
 }
-variable "instanceTenancy" {
+variable "tipo_criacao" {
     default = "default"
 }
-variable "dnsSupport" {
+variable "suporte_dns" {
     default = true
 }
-variable "dnsHostNames" {
+variable "dns_host_names" {
     default = true
 }
-variable "vpcCIDRblock" {
+variable "bloco_ip_vpc" {
     default = "10.0.0.0/16"
 }
-variable "publicsCIDRblock" {
+variable "bloco_ip_publico" {
     default = "10.0.1.0/24"
 }
-variable "privatesCIDRblock" {
+variable "bloco_ip_privado" {
     default = "10.0.2.0/24"
 }
-variable "mngtCIDRblock" {
+variable "bloco_ip_publico_gerenciamento" {
     default = "10.0.3.0/24"
 }
-variable "publicdestCIDRblock" {
+variable "bloco_ip_destino_publico" {
     default = "0.0.0.0/0"
 }
-variable "localdestCIDRblock" {
+variable "bloco_ip_destino_local" {
     default = "10.0.0.0/16"
 }
-variable "ingressCIDRblock" {
-    type = list
-    default = [ "0.0.0.0/0" ]
-}
-variable "egressCIDRblock" {
-    type = list
-    default = [ "0.0.0.0/0" ]
-}
-variable "mapPublicIP" {
+variable "mapear_ip_publico" {
     default = true
+}
+variable "tipo_instancia" {
+    default = "t2.micro"
+}
+variable "imagem_instancia_ami" {
+    default = "ami-0b6937ac543fe96d7"
 }

@@ -2,7 +2,7 @@
 #dentro da VPC e  deixando as maquinas sairem para a internet
 resource "aws_security_group" "sg_acesso_ssh_local" {
   #descrição do que estamos fazendo
-  description = "sg = security group (grupo de segurança) acesso ssh somente VPC"
+  description = "sg - security group acesso ssh somente VPC"
   #vinculando nosso SG a uma VPC
   vpc_id = aws_vpc.vpc.id
   
@@ -26,7 +26,7 @@ resource "aws_security_group" "sg_acesso_ssh_local" {
     
   }
   tags = {
-    "Name" = "${var.usuario}_sg_ssh_local"
+    "Name" = "${var.usuario}-sg-ssh-local"
   }
 }
 
@@ -44,7 +44,7 @@ resource "aws_security_group" "sg_acesso_web_publico" {
     cidr_blocks      = [var.bloco_ip_destino_publico]
   }
   tags = {
-    "Name" = "${var.usuario}_sg_web_publico"
+    "Name" = "${var.usuario}-sg-web-publico"
   }
 }
 
@@ -68,6 +68,6 @@ resource "aws_security_group" "sg_acesso_ssh_publico" {
     cidr_blocks      = [var.bloco_ip_destino_publico]
   }
   tags = {
-    "Name" = "${var.usuario}_sg_ssh_publico"
+    "Name" = "${var.usuario}-sg-ssh-publico"
   }
 }

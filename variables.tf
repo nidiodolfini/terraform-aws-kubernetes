@@ -19,13 +19,13 @@ variable "dns_host_names" {
 variable "bloco_ip_vpc" {
     default = "10.0.0.0/16"
 }
-variable "bloco_ip_publico" {
+variable "bloco_ip_kubernetes" {
     default = "10.0.1.0/24"
 }
-variable "bloco_ip_privado" {
+variable "bloco_ip_gerenciamento" {
     default = "10.0.2.0/24"
 }
-variable "bloco_ip_publico_gerenciamento" {
+variable "bloco_ip_privado" {
     default = "10.0.3.0/24"
 }
 variable "bloco_ip_destino_publico" {
@@ -41,5 +41,5 @@ variable "tipo_instancia" {
     default = "t2.micro"
 }
 variable "imagem_instancia_ami" {
-    default = "ami-0b6937ac543fe96d7"
+    default = "ami-085284d24fe829cd0"
 }

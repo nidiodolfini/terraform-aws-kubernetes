@@ -9,10 +9,10 @@ resource "aws_security_group" "sg_acesso_ssh_local" {
   #aqui está sendo passando a permissão de entrada para porta 22
   #mas só para quem estiver cidr da VPC
   ingress {
-    description      = "SSH"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
+    
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
     cidr_blocks      = [var.bloco_ip_destino_local]
 
   }

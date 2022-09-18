@@ -1,0 +1,29 @@
+- hosts: masters
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: criando token para adionar worker no node
+      shell: kubeadm token create --print-join-command
+      register: join_command_raw
+    
+    - debug:
+        msg: "{{ join_command_raw.stdout }}"
+
+    - name: adicionando join command para hostvars
+      set_fact:
+        join_command: "{{ join_command_raw.stdout_lines[0] }}"
+
+- hosts: workers
+  become: yes
+  tasks:
+    - name: retirar o swap
+      shell: "swapoff -a"
+      
+    - name: comando para entra no cluster - join cluster
+      shell: "sudo {{ hostvars['master1'].join_command }} --ignore-preflight-errors all >> node_joined.txt"
+      args:
+        chdir: $HOME
+      register: join_worker
+    
+    - debug:
+        msg: "{{ join_worker }}"

@@ -1,16 +1,21 @@
 - hosts: all
   become: yes
   tasks:
-    - name: criando diretório de configs do Docker
+    - name: alterando nome dos hosts
+      hostname:
+        name: "{{ new_hostname }}"
+        
+    - name: criando diretório de config do Docker
       file: path=/etc/docker state=directory
 
-    - name: trocando o driver para systemd
+    - name: trocando driver do Docker para systemd
       copy:
         dest: "/etc/docker/daemon.json"
         content: |
           {
           "exec-opts": ["native.cgroupdriver=systemd"]
           }
+
     - name: instalando Docker
       apt:
         name: docker.io
@@ -27,11 +32,10 @@
         url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
         state: present
 
-    - name: adicionando repositório Kubernetes
+    - name: adicionando Kubernetes APT repository
       apt_repository:
         repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
         state: present
-        filename: 'kubernetes'
 
     - name: instalando kubelet
       apt:
@@ -43,38 +47,12 @@
       apt:
         name: kubeadm=1.22.4-00
         state: present
-    - name: instalando kubectl
-      apt:
-        name: kubectl=1.22.4-00
-        state: present
-        force: yes
 
-    - name: inicializando o cluster
-      shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
-      args:
-        chdir: $HOME
-        creates: cluster_initialized.txt
-
-    - name: criando o diretório .kube
-      become: yes
-      become_user: ubuntu
-      file:
-        path: $HOME/.kube
-        state: directory
-        mode: 0755
-
-    - name: copiando o admin.conf para o kube config
-      copy:
-        src: /etc/kubernetes/admin.conf
-        dest: /home/ubuntu/.kube/config
-        remote_src: yes
-        owner: ubuntu
-
-    - name: instalando Pod network
-      become: yes
-      become_user: ubuntu
-      shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
-      args:
-        chdir: $HOME
-        creates: pod_network_setup.txt
-#ansible-playbook playbook.yaml -u ubuntu --private-key terraform-aws -i hosts.yaml
+- hosts: masters
+  become: yes
+  tasks:
+  - name: instalando kubectl
+    apt:
+      name: kubectl=1.22.4-00
+      state: present
+      force: yes

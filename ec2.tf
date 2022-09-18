@@ -44,6 +44,5 @@ resource "aws_instance" "ec2_gerenciamento" {
     sudo apt-get install software-properties-common -y
     sudo add-apt-repository --yes --update ppa:ansible/ansible -y
     sudo apt-get install ansible -y
-    sudo echo "ger_${var.usuario}_ec2_${count.index}" > /etc/hostname
   EOF
 }

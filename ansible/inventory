@@ -1,0 +1,17 @@
+[masters]
+master1 ansible_host=10.0.1.190 new_hostname=master1
+
+
+[workers]
+worker1 ansible_host=10.0.1.215 new_hostname=worker1
+
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_common_args='-o StrictHostKeyChecking=accept-new'
+ansible_user=ubuntu
+ansible_ssh_private_key_file=/home/ubuntu/.ssh/terraform-aws
+#ansible-playbook playbook.yaml -i hosts.yaml
+#ansible-playbook masters.yaml -i hosts.yaml
+#ansible-playbook masters.yaml -i hosts.yaml
+#ansible -i inventory all -m ping

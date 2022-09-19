@@ -10,7 +10,7 @@ resource "aws_subnet" "subrede_publica_kubernetes" {
   availability_zone       = var.zona_disponibilidade
   #tag Name nomeia tá, isso vai servir para todos.
   tags = {
-    Name = "${var.usuario} Subrede Publica"
+    Name = "${var.usuario} - Subrede Publica kubernetes"
   }
 }
 
@@ -20,6 +20,6 @@ resource "aws_subnet" "subrede_publica_gerenciamento" {
   map_public_ip_on_launch = var.mapear_ip_publico 
   availability_zone       = var.zona_disponibilidade
   tags = {
-    Name = "${var.usuario} Subrede Publica Gerenciamento"
+    Name = "${var.usuario} - Subrede Publica Gerenciamento"
   }
 }

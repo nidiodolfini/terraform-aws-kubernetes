@@ -36,7 +36,7 @@ resource "aws_instance" "ec2_gerenciamento" {
   }
   key_name = "${var.usuario}-terraform-aws"
   vpc_security_group_ids = ["${aws_security_group.sg_acesso_ssh_publico.id}" ]
-  subnet_id = aws_subnet.subrede_publica_kubernetes.id
+  subnet_id = aws_subnet.subrede_publica_gerenciamento.id
   #usando o dados do usuário para instalar o ansible para nós
   user_data = <<-EOF
     #!/bin/bash

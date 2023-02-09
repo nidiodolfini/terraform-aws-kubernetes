@@ -2,10 +2,10 @@ variable "usuario" {
     default = "nidio"
 }
 variable "regiao" {
-     default = "us-west-1"
+     default = "sa-east-1"
 }
 variable "zona_disponibilidade" {
-     default = "us-west-1a"
+     default = "sa-east-1a"
 }
 variable "tipo_criacao" {
     default = "default"
@@ -44,5 +44,5 @@ variable "tipo_instancia_kubernetes" {
     default = "t2.medium"
 }
 variable "imagem_instancia_ami" {
-    default = "ami-085284d24fe829cd0"
+    default = "ami-04b3c23ec8efcc2d6"
 }

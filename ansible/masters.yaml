@@ -6,7 +6,6 @@
       args:
         chdir: $HOME
 
-
     - name: criando diretório .kube
       become: yes
       become_user: ubuntu

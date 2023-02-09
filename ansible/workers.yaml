@@ -1,4 +1,4 @@
-- hosts: masters
+- hosts: controlplane
   become: yes
   gather_facts: false
   tasks:
@@ -13,8 +13,8 @@
       set_fact:
         join_command: "{{ join_command_raw.stdout_lines[0] }}"
 
-- hosts: workers
-  become: yes
+- hosts: nodes
+  become: true
   tasks:
     - name: retirar o swap
       shell: "swapoff -a"

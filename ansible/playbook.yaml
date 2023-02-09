@@ -1,5 +1,5 @@
 - hosts: all
-  become: yes
+  become: true
   tasks:
     - name: alterando nome dos hosts
       hostname:
@@ -49,7 +49,7 @@
         state: present
 
 - hosts: masters
-  become: yes
+  become: true
   tasks:
   - name: instalando kubectl
     apt:
